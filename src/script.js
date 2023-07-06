@@ -2,6 +2,7 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
+// import { threadId } from 'worker_threads'
 
 /**
  * Base
@@ -34,11 +35,15 @@ const object3 = new THREE.Mesh(
     new THREE.MeshBasicMaterial({ color: '#ff0000' })
 )
 object3.position.x = 2
-
+// object1.name = "bir"
+// object2.name = "iki"
+// object3.name = "üç"
 scene.add(object1, object2, object3)
 
 
 const raycaster = new THREE.Raycaster();
+
+
 
 /**
  * Sizes
@@ -84,10 +89,14 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
+const green = new THREE.Color('rgb(0,255,0)');
+const red = new THREE.Color('rgb(255,0,0)');
+
 /**
  * Animate
  */
 const clock = new THREE.Clock()
+
 
 const tick = () =>
 {
@@ -95,6 +104,28 @@ const tick = () =>
 
     // Update controls
     controls.update()
+   
+   object1.position.y = Math.sin(elapsedTime * 0.75)*2
+   object2.position.y = Math.sin(elapsedTime* 0.85)*2
+   object3.position.y = Math.sin(elapsedTime * 0.95)*2
+
+   const rayOrigin = new THREE.Vector3(-3,0,0)
+   const rayDirection = new THREE.Vector3(1,0,0)
+   rayDirection.normalize()
+   raycaster.set(rayOrigin,rayDirection)
+
+   const objectsTest = [object1,object2,object3]
+   const intersects = raycaster.intersectObjects(objectsTest)
+//    console.log(intersects)
+
+for(const object of objectsTest){
+    object.material.color.set(red)
+}
+   
+for(const intersect of intersects)
+{
+    intersect.object.material.color.set(green)
+}
 
     // Render
     renderer.render(scene, camera)
